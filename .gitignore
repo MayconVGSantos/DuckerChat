@@ -1,0 +1,12 @@
+# Ignorar variáveis de ambiente
+.env
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
