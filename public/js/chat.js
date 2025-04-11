@@ -16,6 +16,13 @@ const enterBtn = document.getElementById("enter-chat");
 const nicknameScreen = document.getElementById("nickname-screen");
 const chatScreen = document.getElementById("chat-screen");
 const messageInput = document.getElementById("message-input");
+messageInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    sendBtn.click(); // 🔁 Simula clique no botão "Enviar"
+  }
+});
+
 const sendBtn = document.getElementById("send-message");
 const chatMessages = document.getElementById("chat-messages");
 const userList = document.getElementById("user-list");
