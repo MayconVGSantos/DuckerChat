@@ -13,3 +13,8 @@ Thumbs.db
 
 # Local Netlify folder
 .netlify
+
+echo "duckchat-*.json" >> .gitignore
+
+# Firebase Admin Secrets
+*.json
