@@ -4,6 +4,8 @@
 
 import { initializeApp, cert } from "firebase-admin/app";
 import { getDatabase, ref, push } from "firebase-admin/database";
+import { getDatabase } from "firebase-admin/database";
+import { v4 as uuidv4 } from 'uuid';
 import dotenv from "dotenv";
 import bots from "./botsConfig.js"; // Deve conter um array de bots [{ nickname, frases: [...] }]
 
@@ -30,14 +32,16 @@ async function simulateConversation() {
     const bot = getRandomBot(lastBot);
     lastBot = bot;
 
+    const id = uuidv4(); // Gera uma chave aleatória
+
     const frase = getRandomPhrase(bot);
     const messagesRef = ref(db, "messages");
 
-    await push(messagesRef, {
-      nickname: bot.nickname,
-      message: frase,
-      timestamp: Date.now(),
-    });
+    await set(ref(db, `messages/${id}`), {
+        nickname: bot.nickname,
+        message: frase,
+        timestamp: Date.now(),
+      });
 
     console.log(`[BOT] ${bot.nickname}: ${frase}`);
 
