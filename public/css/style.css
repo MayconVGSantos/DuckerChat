@@ -17,19 +17,36 @@ body {
   }
   
   #chat-screen {
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    background-color: #121212;
+    color: #fff;
   }
   
   #chat-messages {
     flex: 1;
     overflow-y: auto;
-    max-height: 100%;
     padding: 1rem;
     background-color: #1e1e1e;
     display: flex;
     flex-direction: column;
+    max-height: 100%;
+    overflow-y: scroll; /* ← barra de rolagem sempre visível */
+
+  }
+  
+  #chat-messages::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  #chat-messages::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 8px;
+  }
+  
+  #chat-messages::-webkit-scrollbar-track {
+    background-color: #1e1e1e;
   }
   
   
