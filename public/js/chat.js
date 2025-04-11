@@ -166,7 +166,7 @@ function renderMessage(data) {
   if (type === "system") {
     msgEl.classList.add("system");
     msgEl.innerHTML = text; // usa o texto como foi gravado no Firebase
-    msgEl.style.animation = "fadeInUp 0.4s ease-out";  
+    msgEl.style.animation = "fadeInUp 0.4s ease-out";
   } else if (user === nickname) {
     // Mensagem do usuário atual (balão à direita)
     msgEl.classList.add("user");
@@ -202,6 +202,7 @@ function renderMessage(data) {
 // 1. Evento: entrar no chat
 enterBtn.addEventListener("click", async () => {
   const nick = nicknameInput.value.trim();
+  const value = messageInput.value.trim();
   if (!nick) return;
 
   // Verifica se o nickname já está em uso
@@ -232,6 +233,19 @@ enterBtn.addEventListener("click", async () => {
 
   // Foco no campo de mensagem após entrar
   setTimeout(() => messageInput.focus(), 100);
+
+  if (value) {
+    // Está digitando
+    set(ref(db, `typing/${nickname}`), true);
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      remove(ref(db, `typing/${nickname}`));
+    }, 3000);
+  } else {
+    // Apagou tudo e não está mais digitando
+    remove(ref(db, `typing/${nickname}`));
+    clearTimeout(typingTimeout);
+  }
 
   // Notificação de entrada no chat
   push(messagesRef, {
@@ -335,13 +349,13 @@ window.addEventListener("beforeunload", () => {
       type: "system",
       timestamp: Date.now(),
     });
+    remove(ref(db, `typing/${nickname}`));
   }
 });
 
 // Botão para sair da sessão explicitamente
-leaveBtn.addEventListener("click", () => {
-  if (presenceRef) {
-    remove(presenceRef); // Remove presença completamente
-  }
-  location.reload(); // Recarrega a página para voltar à tela inicial
+leaveBtn.addEventListener("click", async () => {
+  await remove(ref(db, `typing/${nickname}`));
+  await remove(presenceRef);
+  window.location.reload();
 });

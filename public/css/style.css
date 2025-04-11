@@ -294,3 +294,11 @@ body {
 .message {
   animation: fadeInUp 0.3s ease-in-out;
 }
+
+#typing-indicator {
+  color: #dcddde; /* texto claro */
+  font-style: italic;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+  animation: fadeInUp 0.3s ease-in-out;
+}
