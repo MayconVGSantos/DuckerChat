@@ -35,11 +35,19 @@ const leaveBtn = document.getElementById("leave-session");
 
 // ===== CONFIGURAÇÃO DE EVENTOS DE ENTRADA =====
 googleLoginBtn.addEventListener("click", async () => {
+  const nick = nicknameInput.value.trim();
+  if (!nick) {
+    alert("Por favor, escolha um nickname antes de entrar.");
+    return;
+  }
+
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
-    nickname = nicknameInput.value.trim() || user.displayName || user.uid;
+    // Nickname será sempre o que o usuário digitou
+    nickname = nick;
+
     const testRef = ref(db, `presence/${nickname}`);
     const snapshot = await get(testRef);
 
@@ -48,17 +56,19 @@ googleLoginBtn.addEventListener("click", async () => {
       return;
     }
 
-    // Presença e UI
     presenceRef = ref(db, `presence/${nickname}`);
     await set(presenceRef, {
       nickname,
       status: "online",
       lastSeen: Date.now(),
+      uid: user.uid,
     });
+
     onDisconnect(presenceRef).remove();
 
     nicknameScreen.classList.add("d-none");
     chatScreen.classList.remove("d-none");
+
     setTimeout(() => messageInput.focus(), 100);
 
     push(messagesRef, {
@@ -72,6 +82,7 @@ googleLoginBtn.addEventListener("click", async () => {
     alert("Erro ao autenticar com o Google.");
   }
 });
+
 
 
 // Permite enviar mensagem com Enter
