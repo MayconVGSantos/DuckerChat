@@ -14,7 +14,7 @@ import {
   provider,
   signInWithPopup,
   onAuthStateChanged,
-  signOut
+  signOut,
 } from "./firebase.js";
 
 // ===== SELEÇÃO DE ELEMENTOS DOM =====
@@ -25,13 +25,14 @@ const nicknameScreen = document.getElementById("nickname-screen");
 const chatScreen = document.getElementById("chat-screen");
 const googleLoginBtn = document.getElementById("google-login");
 
-
 // Elementos da interface de chat
 const messageInput = document.getElementById("message-input");
 const sendBtn = document.getElementById("send-message");
 const chatMessages = document.getElementById("chat-messages");
 const userList = document.getElementById("user-list");
 const leaveBtn = document.getElementById("leave-session");
+const typingRef = ref(db, `typing`);
+const typingIndicator = document.getElementById("typing-indicator");
 
 // ===== CONFIGURAÇÃO DE EVENTOS DE ENTRADA =====
 googleLoginBtn.addEventListener("click", async () => {
@@ -83,7 +84,47 @@ googleLoginBtn.addEventListener("click", async () => {
   }
 });
 
+// === Notifica que o usuário está digitando ===
+let typingTimeout;
+messageInput.addEventListener("input", () => {
+  set(ref(db, `typing/${nickname}`), true);
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    remove(ref(db, `typing/${nickname}`));
+  }, 3000);
+});
 
+// === Observa quem está digitando ===
+onValue(typingRef, (snapshot) => {
+  const data = snapshot.val() || {};
+  const typingUsers = Object.keys(data).filter((user) => user !== nickname);
+
+  if (typingUsers.length === 0) {
+    typingIndicator.style.display = "none";
+    typingIndicator.textContent = "";
+    return;
+  }
+
+  // Formatação do texto
+  const dots = ["", ".", "..", "..."];
+  let dotIndex = 0;
+  clearInterval(typingIndicator._dotInterval);
+  typingIndicator._dotInterval = setInterval(() => {
+    const currentDots = dots[dotIndex++ % dots.length];
+
+    if (typingUsers.length === 1) {
+      typingIndicator.textContent = `${typingUsers[0]} está digitando${currentDots}`;
+    } else if (typingUsers.length <= 3) {
+      typingIndicator.textContent = `${typingUsers.join(
+        ", "
+      )} estão digitando${currentDots}`;
+    } else {
+      typingIndicator.textContent = `Várias pessoas estão digitando${currentDots}`;
+    }
+
+    typingIndicator.style.display = "block";
+  }, 500);
+});
 
 // Permite enviar mensagem com Enter
 messageInput.addEventListener("keydown", (event) => {
@@ -130,6 +171,8 @@ function renderMessage(data) {
       : text.includes("saiu")
       ? `<strong>${user}</strong> saiu do chat`
       : text;
+    msgEl.classList.add("fade");
+    msgEl.style.animation = "fadeInUp 0.4s ease-out";
   } else if (user === nickname) {
     // Mensagem do usuário atual (balão à direita)
     msgEl.classList.add("user");
