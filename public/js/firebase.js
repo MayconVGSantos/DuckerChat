@@ -35,5 +35,6 @@ export {
   onValue,
   set,
   remove,
-  update
+  update,
+  get
 };
