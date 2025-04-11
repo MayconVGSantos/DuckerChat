@@ -39,19 +39,7 @@
       Sair da sessão
     </button>
   </div>
-  
-
-  <script type="module">
-    fetch("/config")
-      .then((res) => res.json())
-      .then((config) => {
-        window._FIREBASE_CONFIG = config;
-        const script = document.createElement("script");
-        script.type = "module";
-        script.src = "public//js/chat.js";
-        document.body.appendChild(script);
-      });
-  </script>
+   
   
   </body>
 </html>
