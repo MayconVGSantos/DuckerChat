@@ -34,6 +34,10 @@ const leaveBtn = document.getElementById("leave-session");
 const typingRef = ref(db, `typing`);
 const typingIndicator = document.getElementById("typing-indicator");
 
+// Garantir que o indicador de digitação tenha a cor correta (sobreposição de qualquer estilo inline)
+typingIndicator.style.color = "#dcddde";
+typingIndicator.style.opacity = "0.8";
+
 // ===== CONFIGURAÇÃO DE EVENTOS DE ENTRADA =====
 googleLoginBtn.addEventListener("click", async () => {
   const nick = nicknameInput.value.trim();
@@ -84,21 +88,46 @@ googleLoginBtn.addEventListener("click", async () => {
   }
 });
 
-// === Notifica que o usuário está digitando ===
+// === Controle de digitação ===
 let typingTimeout;
-messageInput.addEventListener("input", () => {
-  // Verifica se o campo tem conteúdo
-  if (messageInput.value.trim().length > 0) {
-    // Está digitando - atualiza status
+let isTyping = false;
+
+// Função para atualizar o estado de digitação
+function updateTypingStatus() {
+  const inputValue = messageInput.value.trim();
+
+  // O usuário começou a digitar e não estava digitando antes
+  if (inputValue.length > 0 && !isTyping) {
+    isTyping = true;
     set(ref(db, `typing/${nickname}`), true);
-    clearTimeout(typingTimeout);
+
+    // Limpa timeout anterior se existir
+    if (typingTimeout) clearTimeout(typingTimeout);
+
+    // Define novo timeout
     typingTimeout = setTimeout(() => {
       remove(ref(db, `typing/${nickname}`));
+      isTyping = false;
     }, 3000);
-  } else {
-    // Campo vazio - remove status de digitação imediatamente
+  }
+  // O usuário parou de digitar (campo vazio)
+  else if (inputValue.length === 0 && isTyping) {
     remove(ref(db, `typing/${nickname}`));
-    clearTimeout(typingTimeout);
+    if (typingTimeout) clearTimeout(typingTimeout);
+    isTyping = false;
+  }
+}
+
+// Monitor de entrada com verificação de conteúdo
+messageInput.addEventListener("input", updateTypingStatus);
+
+// Certeza que o status é limpo quando o campo perde foco
+messageInput.addEventListener("blur", () => {
+  // Se o campo estiver vazio quando perder foco, remove status de digitação
+  if (messageInput.value.trim().length === 0) {
+    remove(ref(db, `typing/${nickname}`));
+    if (typingTimeout) clearTimeout(typingTimeout);
+    isTyping = false;
   }
 });
 
@@ -110,13 +139,20 @@ onValue(typingRef, (snapshot) => {
   if (typingUsers.length === 0) {
     typingIndicator.style.display = "none";
     typingIndicator.textContent = "";
+    clearInterval(typingIndicator._dotInterval);
     return;
   }
 
   // Formatação do texto
   const dots = ["", ".", "..", "..."];
   let dotIndex = 0;
-  clearInterval(typingIndicator._dotInterval);
+
+  // Limpa intervalo anterior se existir
+  if (typingIndicator._dotInterval) {
+    clearInterval(typingIndicator._dotInterval);
+  }
+
+  // Cria novo intervalo para animação de pontos
   typingIndicator._dotInterval = setInterval(() => {
     const currentDots = dots[dotIndex++ % dots.length];
 
@@ -131,6 +167,8 @@ onValue(typingRef, (snapshot) => {
     }
 
     typingIndicator.style.display = "block";
+    // Garante a cor correta a cada atualização
+    typingIndicator.style.color = "#dcddde";
   }, 500);
 });
 
@@ -265,8 +303,12 @@ sendBtn.addEventListener("click", () => {
 
   // Limpa campo de entrada e remove status de digitação
   messageInput.value = "";
-  remove(ref(db, `typing/${nickname}`)); // Importante: Remover quando a mensagem é enviada
-  clearTimeout(typingTimeout);
+
+  // Explicitamente remove o status de digitação (importante!)
+  remove(ref(db, `typing/${nickname}`));
+  if (typingTimeout) clearTimeout(typingTimeout);
+  isTyping = false;
+
   messageInput.focus();
 });
 

@@ -301,11 +301,15 @@ body {
   animation: fadeInUp 0.3s ease-in-out;
 }
 
+/* Adicionar ou substituir a seção de estilo do indicador de digitação */
 #typing-indicator {
-  color: #dcddde; /* texto claro no estilo Discord */
+  color: #dcddde !important; /* texto claro estilo Discord com !important para garantir que aplique */
   font-style: italic;
   font-size: 0.85rem;
   margin-bottom: 4px;
+  padding-left: 16px; /* Alinhamento com as mensagens */
   animation: fadeInUp 0.3s ease-in-out;
-  opacity: 0.8; /* Adiciona leve transparência para parecer mais com Discord */
+  opacity: 0.8;
+  background-color: transparent; /* Garante que não há fundo */
+  display: none; /* Inicialmente oculto */
 }
