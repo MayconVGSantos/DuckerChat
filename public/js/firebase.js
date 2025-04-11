@@ -1,4 +1,3 @@
-// public/js/firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
   getDatabase,
@@ -8,7 +7,8 @@ import {
   onValue,
   set,
   remove,
-  update
+  update,
+  get
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
 // 🔒 INJETE SUAS CHAVES DIRETAMENTE AQUI (visíveis no frontend, cuidado!)
