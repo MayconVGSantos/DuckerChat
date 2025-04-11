@@ -101,6 +101,8 @@ enterBtn.addEventListener("click", async () => {
     lastSeen: Date.now(),
   });
 
+  onDisconnect(presenceRef).remove(); 
+
   // Transição para tela de chat
   nicknameScreen.classList.add("d-none");
   chatScreen.classList.remove("d-none");

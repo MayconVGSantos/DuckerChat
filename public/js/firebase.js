@@ -9,7 +9,8 @@ import {
   set,
   remove,
   update,
-  get
+  get,
+  onDisconnect
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
 // ===== CONFIGURAÇÃO DO FIREBASE =====
@@ -41,5 +42,6 @@ export {
   set,
   remove,
   update,
-  get
+  get,
+  onDisconnect
 };

@@ -1,13 +1,13 @@
 {
   "type": "module",
   "dependencies": {
-    "dotenv": "^16.5.0",       // Gerenciamento de variáveis de ambiente
-    "express": "^5.1.0",       // Framework web
-    "firebase-admin": "^13.2.0", // SDK Admin do Firebase para o servidor
-    "node-cron": "^3.0.3"      // Agendamento de tarefas
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "firebase-admin": "^13.2.0",
+    "node-cron": "^3.0.3"
   },
   "scripts": {
-    "start": "node server.js",  // Inicia servidor principal
-    "reset": "node reset.js"    // Executa script de reset do Firebase
+    "start": "node server.js",
+    "reset": "node reset.js"
   }
 }
