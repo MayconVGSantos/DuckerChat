@@ -1,6 +1,5 @@
 import { get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 export {
-  db,
   ref,
   push,
   onChildAdded,
