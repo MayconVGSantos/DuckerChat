@@ -87,11 +87,19 @@ googleLoginBtn.addEventListener("click", async () => {
 // === Notifica que o usuário está digitando ===
 let typingTimeout;
 messageInput.addEventListener("input", () => {
-  set(ref(db, `typing/${nickname}`), true);
-  clearTimeout(typingTimeout);
-  typingTimeout = setTimeout(() => {
+  // Verifica se o campo tem conteúdo
+  if (messageInput.value.trim().length > 0) {
+    // Está digitando - atualiza status
+    set(ref(db, `typing/${nickname}`), true);
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      remove(ref(db, `typing/${nickname}`));
+    }, 3000);
+  } else {
+    // Campo vazio - remove status de digitação imediatamente
     remove(ref(db, `typing/${nickname}`));
-  }, 3000);
+    clearTimeout(typingTimeout);
+  }
 });
 
 // === Observa quem está digitando ===
@@ -202,7 +210,6 @@ function renderMessage(data) {
 // 1. Evento: entrar no chat
 enterBtn.addEventListener("click", async () => {
   const nick = nicknameInput.value.trim();
-  const value = messageInput.value.trim();
   if (!nick) return;
 
   // Verifica se o nickname já está em uso
@@ -234,19 +241,6 @@ enterBtn.addEventListener("click", async () => {
   // Foco no campo de mensagem após entrar
   setTimeout(() => messageInput.focus(), 100);
 
-  if (value) {
-    // Está digitando
-    set(ref(db, `typing/${nickname}`), true);
-    clearTimeout(typingTimeout);
-    typingTimeout = setTimeout(() => {
-      remove(ref(db, `typing/${nickname}`));
-    }, 3000);
-  } else {
-    // Apagou tudo e não está mais digitando
-    remove(ref(db, `typing/${nickname}`));
-    clearTimeout(typingTimeout);
-  }
-
   // Notificação de entrada no chat
   push(messagesRef, {
     nickname,
@@ -269,8 +263,10 @@ sendBtn.addEventListener("click", () => {
     timestamp: Date.now(),
   });
 
-  // Limpa campo de entrada
+  // Limpa campo de entrada e remove status de digitação
   messageInput.value = "";
+  remove(ref(db, `typing/${nickname}`)); // Importante: Remover quando a mensagem é enviada
+  clearTimeout(typingTimeout);
   messageInput.focus();
 });
 
