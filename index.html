@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="public/css/style.css" />
   </head>
   <body class="bg-dark text-white">
+
     <!-- Tela de nickname -->
     <div id="nickname-screen" class="vh-100 d-flex flex-column justify-content-center align-items-center">
       <h1 class="mb-3">DuckerChat 🦆</h1>
@@ -15,32 +16,31 @@
       <button id="enter-chat" class="btn btn-primary">Entrar no Chat</button>
     </div>
 
-<!-- Tela do chat -->
-<div id="chat-screen" class="vh-100 d-none flex-column position-relative">
-    <div class="d-flex flex-grow-1">
-      <!-- Mensagens -->
-      <div class="flex-grow-1 overflow-auto p-3 d-flex flex-column" id="chat-messages"></div>
-  
-      <!-- Lista de usuários -->
-      <div id="online-users" class="bg-dark text-white p-3" style="width: 250px; overflow-y: auto;">
-        <h5>Usuários Online</h5>
-        <ul id="user-list" class="list-unstyled mb-0"></ul>
+    <!-- Tela do chat -->
+    <div id="chat-screen" class="vh-100 d-none d-flex flex-column">
+      <div class="d-flex flex-grow-1 overflow-hidden">
+        <!-- Mensagens -->
+        <div id="chat-messages" class="flex-grow-1"></div>
+
+        <!-- Lista de usuários -->
+        <div id="online-users" class="bg-dark text-white p-3" style="width: 250px; overflow-y: auto;">
+          <h5>Usuários Online</h5>
+          <ul id="user-list" class="list-unstyled mb-0"></ul>
+        </div>
       </div>
+
+      <!-- Campo de mensagem -->
+      <div class="input-group p-2 border-top bg-secondary" id="message-input-container">
+        <input type="text" id="message-input" class="form-control" placeholder="Digite sua mensagem..." />
+        <button id="send-message" class="btn btn-light">Enviar</button>
+      </div>
+
+      <!-- Botão sair -->
+      <button id="leave-session" class="btn btn-outline-light position-absolute top-0 end-0 m-2">
+        Sair da sessão
+      </button>
     </div>
-  
-    <!-- Input de mensagem -->
-    <div class="input-group p-2 border-top bg-secondary">
-      <input type="text" id="message-input" class="form-control" placeholder="Digite sua mensagem..." />
-      <button id="send-message" class="btn btn-light">Enviar</button>
-    </div>
-  
-    <!-- Botão sair -->
-    <button id="leave-session" class="btn btn-outline-light position-absolute top-0 end-0 m-2">
-      Sair da sessão
-    </button>
-  </div>
-   
-  <script type="module" src="public/js/chat.js"></script>
-  
+
+    <script type="module" src="public/js/chat.js"></script>
   </body>
 </html>

@@ -28,7 +28,8 @@ const messagesRef = ref(db, "messages");
 
 // Scroll automático
 function scrollToBottom() {
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+  chatMessages.lastElementChild?.scrollIntoView({ behavior: "smooth" });
+
 }
 
 // Renderiza mensagens

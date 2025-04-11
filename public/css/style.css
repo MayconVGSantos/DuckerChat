@@ -1,11 +1,9 @@
-body {
-    background-color: #121212;
-    color: #ffffff;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-  }
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
   
   #nickname-screen {
     text-align: center;
@@ -15,25 +13,29 @@ body {
     max-width: 400px;
     text-align: center;
   }
-  
   #chat-screen {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: #121212;
-    color: #fff;
   }
   
   #chat-messages {
     flex: 1;
-    overflow-y: auto;
+    overflow-y: scroll;
     padding: 1rem;
     background-color: #1e1e1e;
     display: flex;
     flex-direction: column;
-    max-height: 100%;
-    overflow-y: scroll; /* ← barra de rolagem sempre visível */
-
+    scroll-behavior: smooth;
+  }
+  
+  #message-input-container {
+    padding: 10px;
+    background: #1e1e1e;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
   }
   
   #chat-messages::-webkit-scrollbar {
