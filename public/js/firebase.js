@@ -1,3 +1,4 @@
+// ===== IMPORTAÇÃO DE MÓDULOS FIREBASE =====
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
   getDatabase,
@@ -11,7 +12,9 @@ import {
   get
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-// 🔒 INJETE SUAS CHAVES DIRETAMENTE AQUI (visíveis no frontend, cuidado!)
+// ===== CONFIGURAÇÃO DO FIREBASE =====
+// ATENÇÃO: Estas credenciais ficam expostas no cliente
+// Usar regras de segurança do Firebase para mitigar riscos
 const firebaseConfig = {
     apiKey: "AIzaSyADL4OkCjrdnTuIFKPoKGGOep16WALS4dE",
     authDomain: "duckchat-863fd.firebaseapp.com",
@@ -23,10 +26,12 @@ const firebaseConfig = {
     measurementId: "G-0SVH3TD9Z2"
   };
   
-
+// ===== INICIALIZAÇÃO DO APP FIREBASE =====
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// ===== EXPORTAÇÃO DE API FIREBASE =====
+// Exporta funções necessárias para operações no banco de dados
 export {
   db,
   ref,

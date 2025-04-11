@@ -1,20 +1,28 @@
-# Ignorar variáveis de ambiente
+# ===== ARQUIVOS DE CONFIGURAÇÃO LOCAL =====
+# Variáveis de ambiente (segredos, credenciais)
 .env
 
-# Node modules
+# ===== DEPENDÊNCIAS =====
+# Módulos Node.js (podem ser reinstalados)
 node_modules/
 
-# Logs
+# ===== LOGS =====
+# Arquivos de log da aplicação
 *.log
 
-# Sistema
+# ===== ARQUIVOS DE SISTEMA =====
+# Metadados específicos dos sistemas operacionais
 .DS_Store
 Thumbs.db
 
-# Local Netlify folder
+# ===== NETLIFY =====
+# Pasta de configuração local do Netlify
 .netlify
 
+# ===== DADOS DINÂMICOS =====
+# Ignora arquivos de dados do DuckChat
 echo "duckchat-*.json" >> .gitignore
 
-# Firebase Admin Secrets
+# ===== SEGURANÇA =====
+# Credenciais do Firebase Admin (nunca deve ser versionada)
 *.json

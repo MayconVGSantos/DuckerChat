@@ -1,28 +1,37 @@
-// server.js
+// Não estou usando esse código, por causa do Netlify, que não suporta WebSockets
+
+// ===== CONFIGURAÇÃO DO SERVIDOR EXPRESS =====
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// Carrega variáveis de ambiente
 dotenv.config();
 
+// Inicializa o aplicativo Express
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Resolver __dirname em ESModules
+// ===== RESOLUÇÃO DE CAMINHOS (para ES Modules) =====
+// Resolve __dirname em ESModules que não tem suporte nativo a essa variável
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Servir arquivos públicos
+// ===== DEFINIÇÃO DE ROTEAMENTO ESTÁTICO =====
+// Serve arquivos estáticos para o cliente
 app.use('/css', express.static(path.join(__dirname, 'public/css')));
 app.use('/js', express.static(path.join(__dirname, 'public/js')));
 
-// Rota da página principal (index.html na raiz)
+// ===== ROTEAMENTO DE PÁGINAS =====
+// Rota principal - entrega o HTML principal
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Rota para fornecer config do Firebase
+// ===== API DE CONFIGURAÇÃO =====
+// Rota para fornecer credenciais Firebase de forma segura
+// evitando hard-coding no cliente
 app.get('/config', (req, res) => {
   res.json({
     apiKey: process.env.FIREBASE_API_KEY,
@@ -35,7 +44,7 @@ app.get('/config', (req, res) => {
   });
 });
 
-// Iniciar servidor
+// ===== INICIALIZAÇÃO DO SERVIDOR =====
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
