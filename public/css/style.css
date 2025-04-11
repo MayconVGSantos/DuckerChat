@@ -303,13 +303,18 @@ body {
 
 /* Adicionar ou substituir a seção de estilo do indicador de digitação */
 #typing-indicator {
-  color: #dcddde !important; /* texto claro estilo Discord com !important para garantir que aplique */
+  color: #dcddde !important; /* texto claro estilo Discord */
   font-style: italic;
   font-size: 0.85rem;
   margin-bottom: 4px;
-  padding-left: 16px; /* Alinhamento com as mensagens */
+  padding-left: 16px;
   animation: fadeInUp 0.3s ease-in-out;
   opacity: 0.8;
-  background-color: transparent; /* Garante que não há fundo */
+  background-color: #36393f; /* Mesma cor de fundo que o chat */
   display: none; /* Inicialmente oculto */
+  position: sticky; /* Mantém fixo durante a rolagem */
+  bottom: 70px; /* Posição acima do campo de entrada de mensagem */
+  z-index: 10; /* Certifica-se que fique acima das mensagens */
+  width: 100%; /* Largura total */
+  border-top: 1px solid #3c3f45; /* Sutil separador para destacar do conteúdo */
 }

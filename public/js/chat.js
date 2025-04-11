@@ -118,6 +118,26 @@ function updateTypingStatus() {
   }
 }
 
+// Ajusta o layout para garantir que o indicador de digitação fique fixo
+function adjustChatLayout() {
+  // Garante que o indicador de digitação tenha estilo correto
+  typingIndicator.style.position = "sticky";
+  typingIndicator.style.bottom = "70px";
+  typingIndicator.style.zIndex = "10";
+  typingIndicator.style.backgroundColor = "#36393f";
+  typingIndicator.style.borderTop = "1px solid #3c3f45";
+  typingIndicator.style.width = "100%";
+
+  // Estabelece a cor correta
+  typingIndicator.style.color = "#dcddde";
+}
+
+// Execute este ajuste quando a página carregar
+document.addEventListener("DOMContentLoaded", adjustChatLayout);
+
+// Também execute quando a janela for redimensionada para manter a consistência
+window.addEventListener("resize", adjustChatLayout);
+
 // Monitor de entrada com verificação de conteúdo
 messageInput.addEventListener("input", updateTypingStatus);
 
