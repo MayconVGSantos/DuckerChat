@@ -9,7 +9,7 @@ import {
   remove,
   update,
   get,
-  onDisconnect 
+  onDisconnect,
 } from "./firebase.js";
 
 // ===== SELEÇÃO DE ELEMENTOS DOM =====
@@ -53,7 +53,7 @@ function scrollToBottom() {
 // Formata timestamp para mostrar hora da mensagem (estilo Discord)
 function formatTime(timestamp) {
   const date = new Date(timestamp);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
 // ===== FUNÇÕES DE RENDERIZAÇÃO =====
@@ -73,24 +73,29 @@ function renderMessage(data) {
       ? `<strong>${user}</strong> saiu do chat`
       : text;
   } else if (user === nickname) {
-    // Mensagem do usuário atual
+    // Mensagem do usuário atual (balão à direita)
     msgEl.classList.add("user");
     msgEl.innerHTML = `
-      <div class="d-flex align-items-center mb-1">
-        <span class="fw-bold">${user}</span>
-        <span class="text-muted ms-2" style="font-size: 0.7rem;">${time}</span>
+      <div class="message-content">
+        ${text}
       </div>
-      ${text}
+      <div class="message-time" style="text-align: right; font-size: 0.7rem; opacity: 0.7; margin-top: 4px;">
+        ${time}
+      </div>
     `;
   } else {
-    // Mensagem de outros usuários
+    // Mensagem de outros usuários (balão à esquerda)
     msgEl.classList.add("other");
     msgEl.innerHTML = `
-      <div class="d-flex align-items-center mb-1">
-        <span class="fw-bold">${user}</span>
-        <span class="text-muted ms-2" style="font-size: 0.7rem;">${time}</span>
+      <div class="message-user" style="font-weight: bold; margin-bottom: 4px; color: #7289da;">
+        ${user}
       </div>
-      ${text}
+      <div class="message-content">
+        ${text}
+      </div>
+      <div class="message-time" style="font-size: 0.7rem; opacity: 0.7; margin-top: 4px;">
+        ${time}
+      </div>
     `;
   }
 
@@ -129,7 +134,7 @@ enterBtn.addEventListener("click", async () => {
   // Transição para tela de chat
   nicknameScreen.classList.add("d-none");
   chatScreen.classList.remove("d-none");
-  
+
   // Foco no campo de mensagem após entrar
   setTimeout(() => messageInput.focus(), 100);
 
@@ -177,19 +182,19 @@ onValue(presenceListRef, (snapshot) => {
     const statusIcons = {
       online: "🟢", // Verde para online
       background: "🟠", // Laranja para ausente
-      offline: "⚫" // Cinza para offline
+      offline: "⚫", // Cinza para offline
     };
-    
+
     Object.values(data).forEach((user) => {
       const statusIcon = statusIcons[user.status] || statusIcons.offline;
       const li = document.createElement("li");
       li.innerHTML = `<span>${statusIcon}</span> ${user.nickname}`;
-      
+
       // Adiciona classe para o próprio usuário
       if (user.nickname === nickname) {
         li.classList.add("fw-bold");
       }
-      
+
       userList.appendChild(li);
     });
   }

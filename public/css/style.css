@@ -70,6 +70,7 @@ body {
   display: flex;
   flex-direction: column;
   scroll-behavior: smooth;
+  padding-bottom: 20px; /* Mais espaço na parte inferior */
 }
 
 /* Container do campo de entrada de mensagens */
@@ -141,17 +142,29 @@ body {
   border-radius: 16px 16px 0 16px;
   border-left: none;
   padding: 10px 16px;
+  margin-left: 40px; /* Espaço à esquerda para balões alinhados à direita */
+}
+
+.message.user .message-time {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* Mensagens de outros usuários (alinhadas à esquerda) */
 .message.other {
-  background-color: #36393f;
+  background-color: #2f3136;
   color: #dcddde;
   align-self: flex-start;
   border-radius: 16px 16px 16px 0;
   border-left: none;
   padding: 10px 16px;
   border: 1px solid #32353b;
+  margin-right: 40px; /* Espaço à direita para balões alinhados à esquerda */
+}
+
+.message.user .message-content,
+.message.other .message-content {
+  width: 100%;
+  overflow-wrap: break-word;
 }
 
 /* Mensagens do sistema (eventos, centralizado) */
