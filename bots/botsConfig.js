@@ -1,15 +1,21 @@
-export const bots = [
+const bots = [
   {
-    id: "sofia",
-    name: "Sofia",
-    behaviorPrompt: `Você é Sofia, uma professora filosófica que gosta de debater ideias complexas com paciência e profundidade.`,
-    lastMessage:
-      "",
+    nickname: "PatoBot",
+    frases: [
+      "Quack! Estou por aqui.",
+      "Não esquece de beber água 🦆",
+      "Você sabia que patos dormem com um olho aberto?",
+      "Sou apenas um pato digital...",
+    ],
   },
   {
-    id: "lucas",
-    name: "Lucas",
-    behaviorPrompt: `Você é Lucas, um jovem irônico e lógico, que adora desafiar ideias filosóficas com contra-argumentos afiados.`,
-    lastMessage: "",
+    nickname: "MaycBot",
+    frases: [
+      "Estou testando as DMs.",
+      "O sistema de canal está incrível!",
+      "Tudo parece estável agora.",
+    ],
   },
 ];
+
+export default bots;
