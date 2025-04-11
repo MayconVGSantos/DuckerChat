@@ -1,4 +1,5 @@
-import {
+import { get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+export {
   db,
   ref,
   push,
@@ -7,7 +8,9 @@ import {
   set,
   remove,
   update,
-} from "./firebase.js";
+  get
+};
+
 
 const nicknameInput = document.getElementById("nickname-input");
 const enterBtn = document.getElementById("enter-chat");
@@ -55,14 +58,21 @@ function renderMessage(data) {
 }
 
 // Evento: entrar no chat
-enterBtn.addEventListener("click", () => {
+enterBtn.addEventListener("click", async () => {
   const nick = nicknameInput.value.trim();
   if (!nick) return;
+
+  const testRef = ref(db, `presence/${nick}`);
+  const snapshot = await get(testRef);
+
+  if (snapshot.exists()) {
+    alert("Este nickname já está em uso. Tente outro.");
+    return;
+  }
 
   nickname = nick;
   presenceRef = ref(db, `presence/${nickname}`);
 
-  // Escreve presença no banco
   set(presenceRef, {
     nickname,
     status: "online",
@@ -72,7 +82,6 @@ enterBtn.addEventListener("click", () => {
   nicknameScreen.classList.add("d-none");
   chatScreen.classList.remove("d-none");
 
-  // Mensagem de entrada
   push(messagesRef, {
     nickname,
     text: `${nickname} entrou no chat.`,

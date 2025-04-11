@@ -24,12 +24,14 @@ body {
   
   #chat-messages {
     flex: 1;
-    overflow-y: scroll;
+    overflow-y: auto;
+    max-height: 100%;
     padding: 1rem;
     background-color: #1e1e1e;
     display: flex;
     flex-direction: column;
   }
+  
   
   .message {
     padding: 0.75rem 1rem;
