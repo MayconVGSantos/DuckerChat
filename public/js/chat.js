@@ -164,15 +164,9 @@ function renderMessage(data) {
   msgEl.classList.add("message");
 
   if (type === "system") {
-    // Mensagem de sistema (entrada/saída de usuários)
     msgEl.classList.add("system");
-    msgEl.innerHTML = text.includes("entrou")
-      ? `<strong>${user}</strong> acabou de entrar`
-      : text.includes("saiu")
-      ? `<strong>${user}</strong> saiu do chat`
-      : text;
-    msgEl.classList.add("fade");
-    msgEl.style.animation = "fadeInUp 0.4s ease-out";
+    msgEl.innerHTML = text; // usa o texto como foi gravado no Firebase
+    msgEl.style.animation = "fadeInUp 0.4s ease-out";  
   } else if (user === nickname) {
     // Mensagem do usuário atual (balão à direita)
     msgEl.classList.add("user");
