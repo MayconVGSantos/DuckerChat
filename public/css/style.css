@@ -64,20 +64,21 @@ body {
 /* Área de mensagens com scroll */
 #chat-messages {
   flex: 1;
-  overflow-y: scroll;
+  overflow-y: auto; /* Alterado de scroll para auto */
   padding: 1rem;
   background-color: #36393f;
   display: flex;
   flex-direction: column;
   scroll-behavior: smooth;
   padding-bottom: 20px; /* Mais espaço na parte inferior */
+  max-height: calc(100vh - 80px); /* Altura máxima para evitar overflow */
 }
 
 /* Container do campo de entrada de mensagens */
 #message-input-container {
   padding: 0 16px 24px 16px;
   background: #36393f;
-  margin-top: 8px;
+  margin-top: 0; /* Removido margin-top para evitar espaços */
 }
 
 #message-input {
@@ -188,8 +189,7 @@ body {
 /* ===== COMPONENTES DE INTERFACE ===== */
 .input-group {
   background-color: #36393f;
-  position: sticky;
-  bottom: 0;
+  position: relative; /* Alterado de sticky para relative */
   z-index: 10;
   border-top: 1px solid #42464d;
 }
@@ -301,20 +301,25 @@ body {
   animation: fadeInUp 0.3s ease-in-out;
 }
 
-/* Adicionar ou substituir a seção de estilo do indicador de digitação */
+/* Container fixo para elementos da parte inferior */
+#fixed-bottom-container {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  background-color: #36393f;
+  z-index: 100;
+  border-top: 1px solid #3c3f45;
+  flex-shrink: 0; /* Impede que o container encolha */
+}
+
+/* Indicador de digitação */
 #typing-indicator {
-  color: #dcddde !important; /* texto claro estilo Discord */
+  color: #dcddde !important;
   font-style: italic;
   font-size: 0.85rem;
-  margin-bottom: 4px;
-  padding-left: 16px;
-  animation: fadeInUp 0.3s ease-in-out;
+  padding: 8px 16px 4px 16px;
   opacity: 0.8;
-  background-color: #36393f; /* Mesma cor de fundo que o chat */
-  display: none; /* Inicialmente oculto */
-  position: sticky; /* Mantém fixo durante a rolagem */
-  bottom: 70px; /* Posição acima do campo de entrada de mensagem */
-  z-index: 10; /* Certifica-se que fique acima das mensagens */
-  width: 100%; /* Largura total */
-  border-top: 1px solid #3c3f45; /* Sutil separador para destacar do conteúdo */
+  background-color: #36393f;
+  width: 100%;
+  animation: fadeInUp 0.3s ease-in-out;
 }

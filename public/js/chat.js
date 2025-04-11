@@ -118,18 +118,54 @@ function updateTypingStatus() {
   }
 }
 
-// Ajusta o layout para garantir que o indicador de digitação fique fixo
 function adjustChatLayout() {
-  // Garante que o indicador de digitação tenha estilo correto
-  typingIndicator.style.position = "sticky";
-  typingIndicator.style.bottom = "70px";
-  typingIndicator.style.zIndex = "10";
-  typingIndicator.style.backgroundColor = "#36393f";
-  typingIndicator.style.borderTop = "1px solid #3c3f45";
-  typingIndicator.style.width = "100%";
-
-  // Estabelece a cor correta
+  // Reconfigurar a estrutura se necessário
+  const chatScreen = document.getElementById("chat-screen");
+  const chatMessages = document.getElementById("chat-messages");
+  const typingIndicator = document.getElementById("typing-indicator");
+  const messageInputContainer = document.getElementById("message-input-container");
+  
+  // 1. Ajustar o container de mensagens para permitir overflow sem afetar o indicador de digitação
+  chatMessages.style.overflowY = "auto";
+  chatMessages.style.display = "flex";
+  chatMessages.style.flexDirection = "column";
+  chatMessages.style.flex = "1 1 auto";
+  
+  // 2. Criar container fixo para o indicador + input de mensagem se ainda não existir
+  let fixedBottomContainer = document.getElementById("fixed-bottom-container");
+  
+  if (!fixedBottomContainer) {
+    // Não modificar a DOM diretamente se não necessário
+    fixedBottomContainer = document.createElement("div");
+    fixedBottomContainer.id = "fixed-bottom-container";
+    fixedBottomContainer.style.position = "sticky";
+    fixedBottomContainer.style.bottom = "0";
+    fixedBottomContainer.style.width = "100%";
+    fixedBottomContainer.style.backgroundColor = "#36393f";
+    fixedBottomContainer.style.zIndex = "100";
+    fixedBottomContainer.style.borderTop = "1px solid #42464d";
+    
+    // Mover os elementos para o container fixo
+    typingIndicator.parentNode.insertBefore(fixedBottomContainer, typingIndicator);
+    fixedBottomContainer.appendChild(typingIndicator);
+    fixedBottomContainer.appendChild(messageInputContainer);
+  }
+  
+  // 3. Ajustar o estilo do indicador de digitação
   typingIndicator.style.color = "#dcddde";
+  typingIndicator.style.backgroundColor = "#36393f";
+  typingIndicator.style.paddingLeft = "16px";
+  typingIndicator.style.paddingRight = "16px";
+  typingIndicator.style.paddingTop = "8px";
+  typingIndicator.style.paddingBottom = "4px";
+  typingIndicator.style.fontSize = "0.85rem";
+  typingIndicator.style.fontStyle = "italic";
+  typingIndicator.style.opacity = "0.8";
+  
+  // Garantir que o indicador esteja inicialmente oculto
+  if (typingIndicator.textContent.trim() === "") {
+    typingIndicator.style.display = "none";
+  }
 }
 
 // Execute este ajuste quando a página carregar
@@ -156,39 +192,46 @@ onValue(typingRef, (snapshot) => {
   const data = snapshot.val() || {};
   const typingUsers = Object.keys(data).filter((user) => user !== nickname);
 
+  // Garantir que o indicador existe e tem o estilo correto
+  if (!typingIndicator) return;
+  
   if (typingUsers.length === 0) {
+    // Não há usuários digitando - esconde o indicador
     typingIndicator.style.display = "none";
     typingIndicator.textContent = "";
-    clearInterval(typingIndicator._dotInterval);
+    if (typingIndicator._dotInterval) {
+      clearInterval(typingIndicator._dotInterval);
+      typingIndicator._dotInterval = null;
+    }
     return;
   }
 
-  // Formatação do texto
+  // Formatação do texto com pontos animados
   const dots = ["", ".", "..", "..."];
   let dotIndex = 0;
-
-  // Limpa intervalo anterior se existir
+  
+  // Limpa intervalo anterior
   if (typingIndicator._dotInterval) {
     clearInterval(typingIndicator._dotInterval);
   }
-
-  // Cria novo intervalo para animação de pontos
+  
+  // Define novo intervalo para animação de pontos
   typingIndicator._dotInterval = setInterval(() => {
     const currentDots = dots[dotIndex++ % dots.length];
-
+    
+    // Determina a mensagem baseada no número de usuários
     if (typingUsers.length === 1) {
       typingIndicator.textContent = `${typingUsers[0]} está digitando${currentDots}`;
     } else if (typingUsers.length <= 3) {
-      typingIndicator.textContent = `${typingUsers.join(
-        ", "
-      )} estão digitando${currentDots}`;
+      typingIndicator.textContent = `${typingUsers.join(", ")} estão digitando${currentDots}`;
     } else {
       typingIndicator.textContent = `Várias pessoas estão digitando${currentDots}`;
     }
-
+    
+    // Certifica-se que o indicador esteja visível e com estilo correto
     typingIndicator.style.display = "block";
-    // Garante a cor correta a cada atualização
     typingIndicator.style.color = "#dcddde";
+    typingIndicator.style.backgroundColor = "#36393f";
   }, 500);
 });
 
