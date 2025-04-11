@@ -8,7 +8,7 @@ import {
   set,
   remove,
   update,
-  get
+  get,
   onDisconnect 
 } from "./firebase.js";
 
