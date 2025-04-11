@@ -35,6 +35,9 @@ messageInput.addEventListener("keydown", (event) => {
   }
 });
 
+// Foco automático no campo de entrada quando o chat é aberto
+nicknameInput.focus();
+
 // ===== VARIÁVEIS DE ESTADO =====
 let nickname = "";
 let presenceRef;
@@ -47,10 +50,17 @@ function scrollToBottom() {
   chatMessages.lastElementChild?.scrollIntoView({ behavior: "smooth" });
 }
 
+// Formata timestamp para mostrar hora da mensagem (estilo Discord)
+function formatTime(timestamp) {
+  const date = new Date(timestamp);
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
 // ===== FUNÇÕES DE RENDERIZAÇÃO =====
 // Renderiza uma mensagem no DOM baseada no tipo e origem
 function renderMessage(data) {
-  const { nickname: user, text, type } = data;
+  const { nickname: user, text, type, timestamp } = data;
+  const time = formatTime(timestamp);
   const msgEl = document.createElement("div");
   msgEl.classList.add("message");
 
@@ -58,18 +68,30 @@ function renderMessage(data) {
     // Mensagem de sistema (entrada/saída de usuários)
     msgEl.classList.add("system");
     msgEl.innerHTML = text.includes("entrou")
-      ? `🟢 <strong>${user}</strong> entrou no chat`
+      ? `<strong>${user}</strong> acabou de entrar`
       : text.includes("saiu")
-      ? `🔴 <strong>${user}</strong> saiu do chat`
+      ? `<strong>${user}</strong> saiu do chat`
       : text;
   } else if (user === nickname) {
     // Mensagem do usuário atual
     msgEl.classList.add("user");
-    msgEl.textContent = `${text}`;
+    msgEl.innerHTML = `
+      <div class="d-flex align-items-center mb-1">
+        <span class="fw-bold">${user}</span>
+        <span class="text-muted ms-2" style="font-size: 0.7rem;">${time}</span>
+      </div>
+      ${text}
+    `;
   } else {
     // Mensagem de outros usuários
     msgEl.classList.add("other");
-    msgEl.textContent = `${user}: ${text}`;
+    msgEl.innerHTML = `
+      <div class="d-flex align-items-center mb-1">
+        <span class="fw-bold">${user}</span>
+        <span class="text-muted ms-2" style="font-size: 0.7rem;">${time}</span>
+      </div>
+      ${text}
+    `;
   }
 
   chatMessages.appendChild(msgEl);
@@ -107,6 +129,9 @@ enterBtn.addEventListener("click", async () => {
   // Transição para tela de chat
   nicknameScreen.classList.add("d-none");
   chatScreen.classList.remove("d-none");
+  
+  // Foco no campo de mensagem após entrar
+  setTimeout(() => messageInput.focus(), 100);
 
   // Notificação de entrada no chat
   push(messagesRef, {
@@ -132,6 +157,7 @@ sendBtn.addEventListener("click", () => {
 
   // Limpa campo de entrada
   messageInput.value = "";
+  messageInput.focus();
 });
 
 // ===== LISTENERS DE TEMPO REAL FIREBASE =====
@@ -147,16 +173,23 @@ onValue(presenceListRef, (snapshot) => {
   userList.innerHTML = "";
 
   if (data) {
+    // Criar status icons diferentes tipo discord
+    const statusIcons = {
+      online: "🟢", // Verde para online
+      background: "🟠", // Laranja para ausente
+      offline: "⚫" // Cinza para offline
+    };
+    
     Object.values(data).forEach((user) => {
-      // Código de cor baseado no estado do usuário
-      const color =
-        user.status === "online"
-          ? "limegreen"
-          : user.status === "background"
-          ? "orange"
-          : "gray";
+      const statusIcon = statusIcons[user.status] || statusIcons.offline;
       const li = document.createElement("li");
-      li.innerHTML = `<span style="color: ${color}">●</span> ${user.nickname}`;
+      li.innerHTML = `<span>${statusIcon}</span> ${user.nickname}`;
+      
+      // Adiciona classe para o próprio usuário
+      if (user.nickname === nickname) {
+        li.classList.add("fw-bold");
+      }
+      
       userList.appendChild(li);
     });
   }
