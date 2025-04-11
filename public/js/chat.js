@@ -1,5 +1,5 @@
-import { get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-export {
+import {
+  db,
   ref,
   push,
   onChildAdded,
@@ -8,7 +8,7 @@ export {
   remove,
   update,
   get
-};
+} from "./firebase.js";
 
 
 const nicknameInput = document.getElementById("nickname-input");
