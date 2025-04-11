@@ -9,6 +9,7 @@ import {
   remove,
   update,
   get
+  onDisconnect 
 } from "./firebase.js";
 
 // ===== SELEÇÃO DE ELEMENTOS DOM =====
@@ -101,7 +102,7 @@ enterBtn.addEventListener("click", async () => {
     lastSeen: Date.now(),
   });
 
-  onDisconnect(presenceRef).remove(); 
+  onDisconnect(presenceRef).remove(); // Remove presença ao desconectar
 
   // Transição para tela de chat
   nicknameScreen.classList.add("d-none");
