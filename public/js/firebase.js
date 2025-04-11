@@ -10,8 +10,13 @@ import {
   remove,
   update,
   get,
-  onDisconnect
-} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+  onDisconnect,
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
 // ===== CONFIGURAÇÃO DO FIREBASE =====
 // ATENÇÃO: Estas credenciais ficam expostas no cliente
@@ -30,6 +35,8 @@ const firebaseConfig = {
 // ===== INICIALIZAÇÃO DO APP FIREBASE =====
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
 // ===== EXPORTAÇÃO DE API FIREBASE =====
 // Exporta funções necessárias para operações no banco de dados
@@ -43,5 +50,10 @@ export {
   remove,
   update,
   get,
-  onDisconnect 
+  onDisconnect,
+  auth,
+  provider,
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut
 };

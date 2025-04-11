@@ -10,6 +10,11 @@ import {
   update,
   get,
   onDisconnect,
+  auth,
+  provider,
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut
 } from "./firebase.js";
 
 // ===== SELEÇÃO DE ELEMENTOS DOM =====
@@ -18,6 +23,8 @@ const nicknameInput = document.getElementById("nickname-input");
 const enterBtn = document.getElementById("enter-chat");
 const nicknameScreen = document.getElementById("nickname-screen");
 const chatScreen = document.getElementById("chat-screen");
+const googleLoginBtn = document.getElementById("google-login");
+
 
 // Elementos da interface de chat
 const messageInput = document.getElementById("message-input");
@@ -27,6 +34,46 @@ const userList = document.getElementById("user-list");
 const leaveBtn = document.getElementById("leave-session");
 
 // ===== CONFIGURAÇÃO DE EVENTOS DE ENTRADA =====
+googleLoginBtn.addEventListener("click", async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    nickname = nicknameInput.value.trim() || user.displayName || user.uid;
+    const testRef = ref(db, `presence/${nickname}`);
+    const snapshot = await get(testRef);
+
+    if (snapshot.exists()) {
+      alert("Este nickname já está em uso. Tente outro.");
+      return;
+    }
+
+    // Presença e UI
+    presenceRef = ref(db, `presence/${nickname}`);
+    await set(presenceRef, {
+      nickname,
+      status: "online",
+      lastSeen: Date.now(),
+    });
+    onDisconnect(presenceRef).remove();
+
+    nicknameScreen.classList.add("d-none");
+    chatScreen.classList.remove("d-none");
+    setTimeout(() => messageInput.focus(), 100);
+
+    push(messagesRef, {
+      nickname,
+      text: `${nickname} entrou no chat.`,
+      type: "system",
+      timestamp: Date.now(),
+    });
+  } catch (err) {
+    console.error("Erro no login Google:", err);
+    alert("Erro ao autenticar com o Google.");
+  }
+});
+
+
 // Permite enviar mensagem com Enter
 messageInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey) {
