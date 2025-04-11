@@ -1,51 +1,71 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { adminDb as db } from "../firebase.js";
-import { bots } from "./botsConfig.js";
-import { ref, push } from "firebase-admin/database";
+// =============================================
+// 🤖 BOT CONTROLLER — Executar apenas no Node.js
+// =============================================
+
+import { initializeApp, cert } from "firebase-admin/app";
+import { getDatabase, ref, push } from "firebase-admin/database";
 import dotenv from "dotenv";
+import bots from "./botsConfig.js"; // Deve conter um array de bots [{ nickname, frases: [...] }]
+
 dotenv.config();
 
-const genAI = new GoogleGenerativeAI("AIzaSyDxqp5Q4LMVowmML6Pj2pAXqBLdD2k9_uI");
+// ========= Inicializar Firebase Admin =========
+const app = initializeApp({
+  credential: cert({
+    type: "service_account",
+    project_id: process.env.FIREBASE_PROJECT_ID,
+    private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    client_email: process.env.FIREBASE_CLIENT_EMAIL,
+  }),
+  databaseURL: process.env.FIREBASE_DB_URL,
+});
 
-async function generateBotResponse(bot, input) {
-  const result = await genAI.generateContent({
-    model: "models/gemini-2.0-flash",
-    contents: [
-      { role: "user", parts: [{ text: `${bot.behaviorPrompt}\n${input}` }] },
-    ],
-  });
+const db = getDatabase(app);
 
-  return result.response.text();
-}
-
-async function sendMessageToChat(botName, message) {
-  await push(ref(db, "messages"), {
-    nickname: botName,
-    text: message,
-    type: "user",
-    timestamp: Date.now(),
-  });
-}
-
+// ========= Função para simular fala dos bots =========
 async function simulateConversation() {
-  console.log("💬 Iniciando diálogo entre bots...");
+  let lastBot = null;
+
   while (true) {
-    const speaker = bots[0];
-    const listener = bots[1];
+    const bot = getRandomBot(lastBot);
+    lastBot = bot;
 
-    try {
-      const response = await generateBotResponse(listener, speaker.lastMessage);
-      console.log(`[${listener.name}]: ${response}`);
-      listener.lastMessage = response;
+    const frase = getRandomPhrase(bot);
+    const messagesRef = ref(db, "messages");
 
-      await sendMessageToChat(listener.name, response);
+    await push(messagesRef, {
+      nickname: bot.nickname,
+      message: frase,
+      timestamp: Date.now(),
+    });
 
-      bots.reverse(); // Alterna papéis
-      await new Promise((r) => setTimeout(r, 5000)); // Delay de 5 segundos
-    } catch (err) {
-      console.error("❌ Erro ao gerar/responder:", err.message);
-    }
+    console.log(`[BOT] ${bot.nickname}: ${frase}`);
+
+    // Esperar entre 6 e 15 segundos
+    await delay(getRandomDelay(6000, 15000));
   }
 }
 
-simulateConversation();
+// ========= Utilitários =========
+
+function getRandomBot(excludeBot = null) {
+  const candidates = bots.filter((b) => b.nickname !== excludeBot?.nickname);
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+function getRandomPhrase(bot) {
+  return bot.frases[Math.floor(Math.random() * bot.frases.length)];
+}
+
+function getRandomDelay(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// ========= Iniciar loop de bots =========
+simulateConversation().catch((err) =>
+  console.error("Erro ao rodar bots:", err)
+);
