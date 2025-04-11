@@ -25,14 +25,17 @@ const db = getDatabase();
 
   try {
     await db.ref('messages').remove();
-    console.log('✔️ Comando remove() enviado.');
+    await db.ref('presence').remove(); // ✅ Remove usuários conectados
 
-    const snapshot = await db.ref('messages').once('value');
+    console.log('✔️ Comando remove() enviado para /messages e /presence.');
 
-    if (snapshot.exists()) {
-      console.log('❌ Ainda existem dados após remove():', snapshot.val());
-    } else {
+    const snapshotMsgs = await db.ref('messages').once('value');
+    const snapshotPres = await db.ref('presence').once('value');
+
+    if (!snapshotMsgs.exists() && !snapshotPres.exists()) {
       console.log('✅ Banco de dados resetado com sucesso.');
+    } else {
+      console.warn('⚠️ Alguns dados persistem após o reset.');
     }
   } catch (err) {
     console.error('❌ Erro ao tentar resetar Firebase:', err);
