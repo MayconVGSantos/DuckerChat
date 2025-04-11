@@ -90,28 +90,30 @@ googleLoginBtn.addEventListener("click", async () => {
 
 // === Controle de digitação ===
 let typingTimeout;
+let typingInterval;
 let isTyping = false;
 
 // Função para atualizar o estado de digitação
 function updateTypingStatus() {
   const inputValue = messageInput.value.trim();
 
-  // O usuário começou a digitar e não estava digitando antes
-  if (inputValue.length > 0 && !isTyping) {
-    isTyping = true;
-    set(ref(db, `typing/${nickname}`), true);
+  if (inputValue.length > 0) {
+    if (!isTyping) {
+      isTyping = true;
+      set(ref(db, `typing/${nickname}`), true);
+    }
 
-    // Limpa timeout anterior se existir
+    // Reinicia timeout (não remove se ainda está digitando)
     if (typingTimeout) clearTimeout(typingTimeout);
-
-    // Define novo timeout
     typingTimeout = setTimeout(() => {
-      remove(ref(db, `typing/${nickname}`));
-      isTyping = false;
+      // Verifica novamente se ainda tem texto, caso contrário remove
+      if (messageInput.value.trim().length === 0) {
+        remove(ref(db, `typing/${nickname}`));
+        isTyping = false;
+      }
     }, 3000);
-  }
-  // O usuário parou de digitar (campo vazio)
-  else if (inputValue.length === 0 && isTyping) {
+  } else {
+    // Remove imediatamente se apagou tudo
     remove(ref(db, `typing/${nickname}`));
     if (typingTimeout) clearTimeout(typingTimeout);
     isTyping = false;
